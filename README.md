@@ -67,10 +67,6 @@ Para sair, digite `sair`.
 OPENAI_API_KEY=sua_chave_aqui
 ```
 
-## 📜 Licença
-
-Este projeto está licenciado sob os termos da licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
 ## ⚠️ Observação
 
 Este projeto é educativo e não constitui recomendação de investimento.
