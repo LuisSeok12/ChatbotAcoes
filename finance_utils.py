@@ -8,40 +8,36 @@ def _maybe_b3_suffix(ticker: str) -> str:
     return t
 
 
-def get_stock_price(ticker: str) -> dict:
-    """Retorna {ok, ticker, price, currency} ou {ok: False, error} usando yfinance."""
+def get_stock_price(ticker: str, period: str = "1d") -> dict:
+    """
+    Retorna {ok, ticker, price, currency} ou {ok: False, error} usando yfinance.
+    Se period != '1d', retorna também preço inicial e variação percentual no período.
+    """
     t = _maybe_b3_suffix(ticker)
     acao = yf.Ticker(t)
 
-    # Tenta via fast_info (mais rápido)
-    price = None
-    currency = None
-    try:
-        fi = getattr(acao, "fast_info", None)
-        if fi and getattr(fi, "last_price", None):
-            price = float(fi.last_price)
-            currency = getattr(fi, "currency", None)
-    except Exception:
-        pass
+    # Busca histórico do período desejado
+    dados = acao.history(period=period)
+    if dados.empty:
+        return {"ok": False, "error": f"Sem dados para {ticker} no período {period}."}
 
-    # Fallback para history
-    if price is None:
-        dados = acao.history(period="1d")
-        if dados.empty:
-            return {"ok": False, "error": f"Sem dados para {ticker}."}
-        price = float(dados["Close"].iloc[-1])
+    preco_atual = float(dados["Close"].iloc[-1])
+    moeda = acao.info.get("currency", "?")
 
-    # Descobre moeda se ainda não tiver
-    if not currency:
-        try:
-            info = acao.get_info()
-            currency = info.get("currency")
-        except Exception:
-            currency = None
-
-    return {
+    retorno = {
         "ok": True,
         "ticker": t,
-        "price": price,
-        "currency": currency or "?"
+        "currency": moeda,
+        "price": preco_atual
     }
+
+    # Se for mais de 1 dia, calcula preço inicial e variação
+    if period != "1d":
+        preco_inicial = float(dados["Close"].iloc[0])
+        variacao = ((preco_atual - preco_inicial) / preco_inicial) * 100
+        retorno.update({
+            "price_start": preco_inicial,
+            "variation_percent": round(variacao, 2)
+        })
+
+    return retorno
