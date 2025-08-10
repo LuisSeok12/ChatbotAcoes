@@ -12,13 +12,20 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "get_stock_price",
-            "description": "Obtém o preço atual de uma ação (ticker).",
+            "description": (
+                "Obtém preço de ação. Se 'period' for maior que 1 dia (ex.: '1y', '6mo'), "
+                "retorna também preço inicial e variação percentual no período."
+            ),
             "parameters": {
                 "type": "object",
                 "properties": {
                     "ticker": {
                         "type": "string",
                         "description": "Símbolo da ação. Ex.: AAPL, MSFT, PETR4.SA"
+                    },
+                    "period": {
+                        "type": "string",
+                        "description": "Janela histórica do yfinance (ex.: '1d', '5d', '1mo', '6mo', '1y', '5y', 'max'). Padrão: '1d'."
                     }
                 },
                 "required": ["ticker"]
@@ -29,7 +36,9 @@ TOOLS = [
 
 SYSTEM_PROMPT = (
     "Você é um assistente financeiro de terminal. "
-    "Se o usuário pedir preço de uma ação, chame a função get_stock_price. "
+    "Quando o usuário pedir preço atual, chame get_stock_price sem 'period' ou com '1d'. "
+    "Quando pedir variação/valor histórico (ex.: 'último ano', '6 meses', 'mês passado'), "
+    "passe um 'period' apropriado do yfinance (ex.: '1y', '6mo', '1mo'). "
     "Explique de forma curta e clara."
 )
 
