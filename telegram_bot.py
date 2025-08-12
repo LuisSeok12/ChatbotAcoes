@@ -25,7 +25,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     try:
         resp = run_round(user_text, get_stock_price)
-        await update.message.reply_text(resp or "Não conseguir formular a resposta no momento")
+        await update.message.reply_text(resp or "Não conseguir formular a resposta no momento", parse_mode="HTML", disable_web_page_preview=True)
     except Exception as e:
         await update.message.reply_text(f"Erro ao processar a solicitação: {e}")
 
@@ -44,3 +44,4 @@ def main():
 if __name__ == "__main__":
 
     main()
+
