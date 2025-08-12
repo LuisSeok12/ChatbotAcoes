@@ -40,7 +40,13 @@ SYSTEM_PROMPT = (
     "Quando pedir variação/valor histórico (ex.: 'último ano', '6 meses', 'mês passado'), "
     "passe um 'period' apropriado do yfinance (ex.: '1y', '6mo', '1mo'). "
     "Explique de forma curta e clara."
+    "Formate SEMPRE a resposta em HTML adequada ao Telegram (parse_mode=HTML), no seguinte estilo:\n"
+    "<b>{TICKER}</b> — {NOME_OPCIONAL}\n"
+    "Preço: <b>{PRICE} {CUR}</b>\n"
+    "{SE_PERIOD>1D: Início: {PRICE_START} · Variação: <b>{VAR}%</b>}\n"
+    "Obs.: Seja sucinto e não use tags fora de <b> e <i>."
 )
+
 
 
 def run_round(user_message: str, get_price_fn, model: str = "gpt-4o-mini") -> str:
@@ -89,3 +95,4 @@ def run_round(user_message: str, get_price_fn, model: str = "gpt-4o-mini") -> st
 
     # Caso não precise de ferramenta
     return msg.content or ""
+
