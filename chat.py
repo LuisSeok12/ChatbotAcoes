@@ -39,14 +39,16 @@ SYSTEM_PROMPT = (
     "Quando o usuário pedir preço atual, chame get_stock_price sem 'period' ou com '1d'. "
     "Quando pedir variação/valor histórico (ex.: 'último ano', '6 meses', 'mês passado'), "
     "passe um 'period' apropriado do yfinance (ex.: '1y', '6mo', '1mo'). "
-    "Explique de forma curta e clara."
-    "Formate SEMPRE a resposta em HTML adequada ao Telegram (parse_mode=HTML), no seguinte estilo:\n"
-    "<b>{TICKER}</b> — {NOME_OPCIONAL}\n"
+    "Formate SEMPRE a resposta em HTML (parse_mode=HTML) neste estilo:\n"
+    "<b>{TICKER}</b>\n"
     "Preço: <b>{PRICE} {CUR}</b>\n"
+    "{SE_1D: Abertura: {OPEN} · Máx: {HIGH} · Mín: {LOW}}\n"
     "{SE_PERIOD>1D: Início: {PRICE_START} · Variação: <b>{VAR}%</b>}\n"
-    "Obs.: Seja sucinto e não use tags fora de <b> e <i>."
+    "Atualizado: {TIMESTAMP}\n"
+    "Regras: use 2 casas decimais; para BRL use 'R$' antes do número, para USD use 'US$'. "
+    "Não use tags fora de <b> e <i>."
+    "Nunca use <br>. Para quebrar linha, use \\n."
 )
-
 
 
 def run_round(user_message: str, get_price_fn, model: str = "gpt-4o-mini") -> str:
