@@ -1,43 +1,62 @@
 import yfinance as yf
+from datetime import datetime
 
 def _maybe_b3_suffix(ticker: str) -> str:
     t = ticker.strip().upper()
-    # Heurística: tickers da B3 costumam terminar com número (ex.: PETR4). Se não houver sufixo, adiciona .SA
     if "." not in t and any(ch.isdigit() for ch in t[-2:]):
         t += ".SA"
     return t
 
-
 def get_stock_price(ticker: str, period: str = "1d") -> dict:
     """
-    Retorna {ok, ticker, price, currency} ou {ok: False, error} usando yfinance.
-    Se period != '1d', retorna também preço inicial e variação percentual no período.
+    Retorna:
+      - sempre: {ok, ticker, currency, price, timestamp}
+      - se period == '1d': também {open, high, low}
+      - se period != '1d': também {price_start, variation_percent}
     """
     t = _maybe_b3_suffix(ticker)
     acao = yf.Ticker(t)
 
-    # Busca histórico do período desejado
     dados = acao.history(period=period)
     if dados.empty:
         return {"ok": False, "error": f"Sem dados para {ticker} no período {period}."}
 
-    preco_atual = float(dados["Close"].iloc[-1])
-    moeda = acao.info.get("currency", "?")
+    last = dados.iloc[-1]
+    price = float(last["Close"])
 
-    retorno = {
+    # timestamp do último candle
+    ts = last.name
+    if isinstance(ts, datetime):
+        timestamp = ts.strftime("%Y-%m-%d %H:%M")
+    else:
+        timestamp = str(ts)
+
+    # evita get_info(): assume BRL para .SA; senão, deixa "USD" como default simples
+    currency = "BRL" if t.endswith(".SA") else "USD"
+
+    resp = {
         "ok": True,
         "ticker": t,
-        "currency": moeda,
-        "price": preco_atual
+        "currency": currency,
+        "price": round(price, 2),
+        "timestamp": timestamp,
     }
 
-    # Se for mais de 1 dia, calcula preço inicial e variação
-    if period != "1d":
-        preco_inicial = float(dados["Close"].iloc[0])
-        variacao = ((preco_atual - preco_inicial) / preco_inicial) * 100
-        retorno.update({
-            "price_start": preco_inicial,
-            "variation_percent": round(variacao, 2)
+    if period == "1d":
+        resp.update({
+            "open": round(float(last["Open"]), 2),
+            "high": round(float(last["High"]), 2),
+            "low":  round(float(last["Low"]), 2),
+        })
+    else:
+        first = dados.iloc[0]
+        price_start = float(first["Close"])
+        var_pct = ((price - price_start) / price_start) * 100
+        resp.update({
+            "price_start": round(price_start, 2),
+            "variation_percent": round(var_pct, 2),
         })
 
-    return retorno
+    return resp
+
+
