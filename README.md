@@ -4,14 +4,14 @@ Chatbot em **Python** que entende pedidos em linguagem natural e, quando necess�
 Suporta tickers internacionais e da **B3** (ex.: `PETR4.SA`). Funciona no **terminal** e no **Telegram**.
 
 
-## 🚀 Recursos
+## Recursos
 - Conversa natural usando **OpenAI Chat Completions**
 - **Function Calling** para buscar preços sob demanda
 - Parâmetro **`period`** para consultas históricas (ex.: `"1y"`, `"6mo"`, `"1mo"`)
 - Heurística para reconhecer tickers da B3 sem precisar digitar `.SA`
 - Integração com **Telegram Bot** (modo polling)
 
-## 📁 Estrutura de Pastas
+## Estrutura de Pastas
 
 ```
 stock-chatbot-openai/
@@ -25,14 +25,14 @@ stock-chatbot-openai/
 └─ finance_utils.py      # Funções utilitárias para buscar preços via yfinance
 ```
 
-## 🛠️ Pré-requisitos
+## Pré-requisitos
 
 * Python 3.9+
 * Conta na OpenAI (chave em `OPENAI_API_KEY`)
 * - (Opcional) Bot do Telegram criado no **@BotFather** (`TELEGRAM_BOT_TOKEN`)
 
 
-## 📦 Instalação
+## Instalação
 
 ```bash
 # Criar ambiente virtual
@@ -50,7 +50,7 @@ cp .env.example .env
 # Editar e colocar sua chave OPENAI_API_KEY no .env
 ```
 
-## ▶️ Uso
+## Uso
 
 ```bash
 python main.py
@@ -66,7 +66,7 @@ qual o preço de VALE3?
 
 Para sair, digite `sair`.
 
-## 💬 Uso no Telegram (opcional)
+## Uso no Telegram (opcional)
 
 1. Crie um bot com **@BotFather** e pegue o token.
 2. Coloque no `.env` a variável `TELEGRAM_BOT_TOKEN`.
@@ -74,13 +74,13 @@ Para sair, digite `sair`.
 ```bash
 python telegram_bot.py
 
-## 📄 .env.example
+## .env.example
 
 ```dotenv
 OPENAI_API_KEY=sua_chave_aqui
 TELEGRAM_BOT_TOKEN=seu_token_telegram
 ```
 
-## ⚠️ Observação
+## Observação
 
 Este projeto é educativo e não constitui recomendação de investimento.
